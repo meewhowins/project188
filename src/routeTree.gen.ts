@@ -9,8 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TriageRouteImport } from './routes/triage'
+import { Route as GhostRouteImport } from './routes/ghost'
+import { Route as FrictionRouteImport } from './routes/friction'
+import { Route as DistractionsRouteImport } from './routes/distractions'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TriageRoute = TriageRouteImport.update({
+  id: '/triage',
+  path: '/triage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GhostRoute = GhostRouteImport.update({
+  id: '/ghost',
+  path: '/ghost',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FrictionRoute = FrictionRouteImport.update({
+  id: '/friction',
+  path: '/friction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DistractionsRoute = DistractionsRouteImport.update({
+  id: '/distractions',
+  path: '/distractions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +43,72 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/distractions': typeof DistractionsRoute
+  '/friction': typeof FrictionRoute
+  '/ghost': typeof GhostRoute
+  '/triage': typeof TriageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/distractions': typeof DistractionsRoute
+  '/friction': typeof FrictionRoute
+  '/ghost': typeof GhostRoute
+  '/triage': typeof TriageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/distractions': typeof DistractionsRoute
+  '/friction': typeof FrictionRoute
+  '/ghost': typeof GhostRoute
+  '/triage': typeof TriageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
+  id: '__root__' | '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DistractionsRoute: typeof DistractionsRoute
+  FrictionRoute: typeof FrictionRoute
+  GhostRoute: typeof GhostRoute
+  TriageRoute: typeof TriageRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/triage': {
+      id: '/triage'
+      path: '/triage'
+      fullPath: '/triage'
+      preLoaderRoute: typeof TriageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ghost': {
+      id: '/ghost'
+      path: '/ghost'
+      fullPath: '/ghost'
+      preLoaderRoute: typeof GhostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/friction': {
+      id: '/friction'
+      path: '/friction'
+      fullPath: '/friction'
+      preLoaderRoute: typeof FrictionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/distractions': {
+      id: '/distractions'
+      path: '/distractions'
+      fullPath: '/distractions'
+      preLoaderRoute: typeof DistractionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +121,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DistractionsRoute: DistractionsRoute,
+  FrictionRoute: FrictionRoute,
+  GhostRoute: GhostRoute,
+  TriageRoute: TriageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
