@@ -157,7 +157,12 @@ function Index() {
           <span className="text-xs text-muted-foreground">Last 10 friction checks</span>
         </div>
         {sleepData.length === 0 ? (
-          <EmptyState text="Start your first friction check ✨" />
+          <Link
+            to="/friction"
+            className="liquid-press hover-lift grid place-items-center rounded-2xl border border-dashed border-primary/50 bg-primary/5 p-8 text-center text-sm font-semibold text-foreground transition-colors hover:bg-primary/10"
+          >
+            Start your first friction check ✨
+          </Link>
         ) : (
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">

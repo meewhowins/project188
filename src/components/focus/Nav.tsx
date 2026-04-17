@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Brain, Ghost, Sparkles, Stethoscope, Home, Moon, Sun } from "lucide-react";
+import { Brain, Ghost, Sparkles, Stethoscope, Home, Moon, Sun, BarChart3 } from "lucide-react";
 import { useFocusState } from "@/lib/storage";
 import { useEffect } from "react";
 
@@ -7,8 +7,9 @@ const tabs = [
   { to: "/", label: "Home", icon: Home, gradient: "gradient-aurora" },
   { to: "/friction", label: "Friction", icon: Brain, gradient: "gradient-sunset" },
   { to: "/ghost", label: "Ghost", icon: Ghost, gradient: "gradient-dream" },
-  { to: "/distractions", label: "Rewards", icon: Sparkles, gradient: "gradient-forest" },
-  { to: "/triage", label: "Triage", icon: Stethoscope, gradient: "gradient-aurora" },
+  { to: "/distractions", label: "Anti-Switch", icon: Sparkles, gradient: "gradient-forest" },
+  { to: "/triage", label: "Pre-Flight", icon: Stethoscope, gradient: "gradient-aurora" },
+  { to: "/dashboard", label: "Dashboard", icon: BarChart3, gradient: "gradient-dream" },
 ] as const;
 
 export function Nav() {

@@ -25,12 +25,9 @@ export const Route = createFileRoute("/ghost")({
 
 function GhostPage() {
   const [state, update] = useFocusState();
-  const [contract, setContract] = useState("Finish 4 topics: Math Ch1–4");
+  const [contract, setContract] = useState("");
   const [items, setItems] = useState<ContractItem[]>([
-    { id: uid(), text: "Topic 1", done: false },
-    { id: uid(), text: "Topic 2", done: false },
-    { id: uid(), text: "Topic 3", done: false },
-    { id: uid(), text: "Topic 4", done: false },
+    { id: uid(), text: "", done: false },
   ]);
   const [duration, setDuration] = useState(45);
   const [vaultOpen, setVaultOpen] = useState(false);
@@ -49,7 +46,7 @@ function GhostPage() {
   const allDone = itemsDone === items.length && items.length > 0;
 
   const addItem = () =>
-    setItems((p) => [...p, { id: uid(), text: `Topic ${p.length + 1}`, done: false }]);
+    setItems((p) => [...p, { id: uid(), text: "", done: false }]);
   const toggleItem = (id: string) =>
     setItems((p) => p.map((i) => (i.id === id ? { ...i, done: !i.done } : i)));
   const removeItem = (id: string) => setItems((p) => p.filter((i) => i.id !== id));
@@ -136,8 +133,8 @@ function GhostPage() {
             value={contract}
             onChange={(e) => setContract(e.target.value)}
             rows={2}
-            className="w-full resize-none rounded-2xl bg-input/40 px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-ring"
-            placeholder="What MUST be true to leave this session?"
+            className="w-full resize-none rounded-2xl bg-input/40 px-4 py-3 font-medium text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+            placeholder="e.g. Finish Math Ch1–4 before I leave"
           />
 
           <div className="mt-5">
@@ -163,7 +160,8 @@ function GhostPage() {
                   <input
                     value={it.text}
                     onChange={(e) => updateItemText(it.id, e.target.value)}
-                    className={`min-w-0 flex-1 bg-transparent text-sm outline-none ${it.done ? "line-through opacity-60" : ""}`}
+                    placeholder="Type your topic…"
+                    className={`min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none ${it.done ? "line-through opacity-60" : ""}`}
                   />
                   <button
                     onClick={() => removeItem(it.id)}
@@ -307,8 +305,8 @@ function GhostPage() {
                   >
                     {it.done && <Check className="h-4 w-4" />}
                   </button>
-                  <span className={`flex-1 text-sm ${it.done ? "line-through opacity-60" : ""}`}>
-                    {it.text}
+                  <span className={`flex-1 text-sm text-foreground ${it.done ? "line-through opacity-60" : ""}`}>
+                    {it.text || <span className="italic text-muted-foreground">(untitled topic)</span>}
                   </span>
                 </li>
               ))}

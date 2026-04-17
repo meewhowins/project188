@@ -13,6 +13,7 @@ import { Route as TriageRouteImport } from './routes/triage'
 import { Route as GhostRouteImport } from './routes/ghost'
 import { Route as FrictionRouteImport } from './routes/friction'
 import { Route as DistractionsRouteImport } from './routes/distractions'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TriageRoute = TriageRouteImport.update({
@@ -35,6 +36,11 @@ const DistractionsRoute = DistractionsRouteImport.update({
   path: '/distractions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
   '/ghost': typeof GhostRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
   '/ghost': typeof GhostRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
   '/ghost': typeof GhostRoute
@@ -65,14 +74,28 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/distractions'
+    | '/friction'
+    | '/ghost'
+    | '/triage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
-  id: '__root__' | '/' | '/distractions' | '/friction' | '/ghost' | '/triage'
+  to: '/' | '/dashboard' | '/distractions' | '/friction' | '/ghost' | '/triage'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/distractions'
+    | '/friction'
+    | '/ghost'
+    | '/triage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   DistractionsRoute: typeof DistractionsRoute
   FrictionRoute: typeof FrictionRoute
   GhostRoute: typeof GhostRoute
@@ -109,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DistractionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +151,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   DistractionsRoute: DistractionsRoute,
   FrictionRoute: FrictionRoute,
   GhostRoute: GhostRoute,
