@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TriageRouteImport } from './routes/triage'
 import { Route as GhostRouteImport } from './routes/ghost'
-import { Route as GatekeeperRouteImport } from './routes/gatekeeper'
 import { Route as FrictionRouteImport } from './routes/friction'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,11 +23,6 @@ const TriageRoute = TriageRouteImport.update({
 const GhostRoute = GhostRouteImport.update({
   id: '/ghost',
   path: '/ghost',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GatekeeperRoute = GatekeeperRouteImport.update({
-  id: '/gatekeeper',
-  path: '/gatekeeper',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FrictionRoute = FrictionRouteImport.update({
@@ -51,7 +45,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/friction': typeof FrictionRoute
-  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
@@ -59,7 +52,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/friction': typeof FrictionRoute
-  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
@@ -68,36 +60,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/friction': typeof FrictionRoute
-  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/dashboard'
-    | '/friction'
-    | '/gatekeeper'
-    | '/ghost'
-    | '/triage'
+  fullPaths: '/' | '/dashboard' | '/friction' | '/ghost' | '/triage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/friction' | '/gatekeeper' | '/ghost' | '/triage'
-  id:
-    | '__root__'
-    | '/'
-    | '/dashboard'
-    | '/friction'
-    | '/gatekeeper'
-    | '/ghost'
-    | '/triage'
+  to: '/' | '/dashboard' | '/friction' | '/ghost' | '/triage'
+  id: '__root__' | '/' | '/dashboard' | '/friction' | '/ghost' | '/triage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FrictionRoute: typeof FrictionRoute
-  GatekeeperRoute: typeof GatekeeperRoute
   GhostRoute: typeof GhostRoute
   TriageRoute: typeof TriageRoute
 }
@@ -116,13 +93,6 @@ declare module '@tanstack/react-router' {
       path: '/ghost'
       fullPath: '/ghost'
       preLoaderRoute: typeof GhostRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gatekeeper': {
-      id: '/gatekeeper'
-      path: '/gatekeeper'
-      fullPath: '/gatekeeper'
-      preLoaderRoute: typeof GatekeeperRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/friction': {
@@ -153,7 +123,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FrictionRoute: FrictionRoute,
-  GatekeeperRoute: GatekeeperRoute,
   GhostRoute: GhostRoute,
   TriageRoute: TriageRoute,
 }

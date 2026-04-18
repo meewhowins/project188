@@ -1,11 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Brain, Ghost, Stethoscope, Home, Moon, Sun, BarChart3, Sparkles, ShieldCheck } from "lucide-react";
+import { Brain, Ghost, Stethoscope, Home, Moon, Sun, BarChart3, Sparkles } from "lucide-react";
 import { useFocusState, useCalibrated } from "@/lib/storage";
 import { useEffect } from "react";
 
 const tabs = [
   { to: "/", label: "Home", icon: Home, gradient: "gradient-aurora" },
-  { to: "/gatekeeper", label: "Gatekeeper", icon: ShieldCheck, gradient: "gradient-sunset" },
   { to: "/friction", label: "Vibe Check", icon: Brain, gradient: "gradient-sunset" },
   { to: "/ghost", label: "Focus Vault", icon: Ghost, gradient: "gradient-dream" },
   { to: "/triage", label: "The Echo", icon: Stethoscope, gradient: "gradient-aurora" },
@@ -28,7 +27,7 @@ export function Nav() {
           <span className="grid h-8 w-8 place-items-center rounded-2xl gradient-aurora animate-gradient-shift text-white shadow-soft">
             <Sparkles className="h-4 w-4" />
           </span>
-          <span className="text-aurora text-base sm:text-lg">Aperion</span>
+          <span className="text-deep-gradient text-base sm:text-lg">Aperion</span>
         </Link>
 
         <nav className="flex items-center gap-1 overflow-x-auto">
@@ -36,12 +35,11 @@ export function Nav() {
             const active =
               t.to === "/" ? location.pathname === "/" : location.pathname.startsWith(t.to);
             const Icon = t.icon;
-            const isGate = t.to === "/gatekeeper";
             return (
               <Link
                 key={t.to}
                 to={t.to}
-                className={`liquid-press group relative flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3 sm:py-2 sm:text-sm ${
+                className={`liquid-press group relative flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-xs font-semibold transition-all sm:px-3 sm:py-2 sm:text-sm ${
                   active
                     ? `text-white shadow-soft ${t.gradient}`
                     : "text-foreground hover:bg-white/40 dark:hover:bg-white/10"
@@ -49,9 +47,6 @@ export function Nav() {
               >
                 <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline sm:inline">{t.label}</span>
-                {isGate && calibrated && (
-                  <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_8px_currentColor]" aria-hidden />
-                )}
                 {active && (
                   <span
                     aria-hidden
@@ -63,20 +58,36 @@ export function Nav() {
           })}
         </nav>
 
-        <button
-          onClick={() =>
-            update((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" }))
-          }
-          aria-label="Toggle theme"
-          className="liquid-press grid h-9 w-9 place-items-center rounded-2xl glass hover-lift"
-        >
-          {state.theme === "dark" ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          {calibrated && (
+            <span className="hidden items-center gap-1.5 rounded-full gradient-forest px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-widest text-foreground shadow-soft animate-pulse-glow sm:inline-flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-foreground animate-pulse" />
+              Session Active
+            </span>
           )}
-        </button>
+          <button
+            onClick={() =>
+              update((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" }))
+            }
+            aria-label="Toggle theme"
+            className="liquid-press grid h-9 w-9 place-items-center rounded-2xl glass hover-lift text-foreground"
+          >
+            {state.theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
+      {calibrated && (
+        <div className="sm:hidden mt-2 flex justify-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full gradient-forest px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-foreground shadow-soft animate-pulse-glow">
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground animate-pulse" />
+            Session Active
+          </span>
+        </div>
+      )}
     </header>
   );
 }
