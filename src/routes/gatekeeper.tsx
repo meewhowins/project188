@@ -220,18 +220,25 @@ function GatekeeperPage() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-foreground">Step 2 — Stroop Test</h2>
-              <p className="text-sm text-foreground/70">
-                Tap the <span className="font-bold">font color</span>, not the word.
+              <p className="text-sm text-foreground/80">
+                Tap the <span className="font-bold">font color</span>, not the word. 1.5s per round.
               </p>
             </div>
             <span className="rounded-full gradient-dream px-3 py-1 text-sm font-bold text-foreground shadow-soft tabular-nums">
               {stroopScore}/{STROOP_TARGET}
             </span>
           </div>
-          <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full gradient-dream transition-all"
               style={{ width: `${stroopPct}%` }}
+            />
+          </div>
+          {/* 1.5s countdown bar */}
+          <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-muted/70">
+            <div
+              className="h-full gradient-sunset transition-[width] duration-75 ease-linear"
+              style={{ width: `${Math.max(0, (stroopTimeLeft / 1500) * 100)}%` }}
             />
           </div>
 
@@ -252,17 +259,20 @@ function GatekeeperPage() {
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-5">
-            {COLORS.map((c, i) => (
-              <button
-                key={c.name}
-                onClick={() => handleStroopAnswer(i)}
-                className="liquid-press rounded-2xl px-3 py-3 text-sm font-bold text-white shadow-soft hover-lift"
-                style={{ background: c.value }}
-              >
-                {c.name}
-              </button>
-            ))}
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            {stroopOptions.map((i) => {
+              const c = COLORS[i];
+              return (
+                <button
+                  key={c.name}
+                  onClick={() => handleStroopAnswer(i)}
+                  className="liquid-press rounded-2xl px-3 py-4 text-sm font-extrabold text-white shadow-soft hover-lift"
+                  style={{ background: c.value, textShadow: "0 1px 2px oklch(0 0 0 / 40%)" }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
           </div>
         </section>
       )}
