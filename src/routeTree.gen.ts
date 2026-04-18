@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TriageRouteImport } from './routes/triage'
 import { Route as GhostRouteImport } from './routes/ghost'
+import { Route as GatekeeperRouteImport } from './routes/gatekeeper'
 import { Route as FrictionRouteImport } from './routes/friction'
-import { Route as DistractionsRouteImport } from './routes/distractions'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -26,14 +26,14 @@ const GhostRoute = GhostRouteImport.update({
   path: '/ghost',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GatekeeperRoute = GatekeeperRouteImport.update({
+  id: '/gatekeeper',
+  path: '/gatekeeper',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FrictionRoute = FrictionRouteImport.update({
   id: '/friction',
   path: '/friction',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DistractionsRoute = DistractionsRouteImport.update({
-  id: '/distractions',
-  path: '/distractions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -50,16 +50,16 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
+  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
+  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
@@ -67,8 +67,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/distractions': typeof DistractionsRoute
   '/friction': typeof FrictionRoute
+  '/gatekeeper': typeof GatekeeperRoute
   '/ghost': typeof GhostRoute
   '/triage': typeof TriageRoute
 }
@@ -77,18 +77,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/distractions'
     | '/friction'
+    | '/gatekeeper'
     | '/ghost'
     | '/triage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/distractions' | '/friction' | '/ghost' | '/triage'
+  to: '/' | '/dashboard' | '/friction' | '/gatekeeper' | '/ghost' | '/triage'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
-    | '/distractions'
     | '/friction'
+    | '/gatekeeper'
     | '/ghost'
     | '/triage'
   fileRoutesById: FileRoutesById
@@ -96,8 +96,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
-  DistractionsRoute: typeof DistractionsRoute
   FrictionRoute: typeof FrictionRoute
+  GatekeeperRoute: typeof GatekeeperRoute
   GhostRoute: typeof GhostRoute
   TriageRoute: typeof TriageRoute
 }
@@ -118,18 +118,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GhostRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gatekeeper': {
+      id: '/gatekeeper'
+      path: '/gatekeeper'
+      fullPath: '/gatekeeper'
+      preLoaderRoute: typeof GatekeeperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/friction': {
       id: '/friction'
       path: '/friction'
       fullPath: '/friction'
       preLoaderRoute: typeof FrictionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/distractions': {
-      id: '/distractions'
-      path: '/distractions'
-      fullPath: '/distractions'
-      preLoaderRoute: typeof DistractionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -152,11 +152,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
-  DistractionsRoute: DistractionsRoute,
   FrictionRoute: FrictionRoute,
+  GatekeeperRoute: GatekeeperRoute,
   GhostRoute: GhostRoute,
   TriageRoute: TriageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
