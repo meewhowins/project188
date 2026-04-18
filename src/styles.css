@@ -203,7 +203,13 @@
   .gradient-dream { background: var(--gradient-dream); }
   .gradient-forest { background: var(--gradient-forest); }
   .text-aurora {
-    background: var(--gradient-aurora);
+    background: linear-gradient(135deg, oklch(0.32 0.18 340), oklch(0.28 0.16 280) 50%, oklch(0.3 0.14 220));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-deep-gradient {
+    background: linear-gradient(135deg, oklch(0.18 0.08 280), oklch(0.22 0.12 340));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
