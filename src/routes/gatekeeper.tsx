@@ -40,31 +40,66 @@ function GatekeeperPage() {
   const [stroopScore, setStroopScore] = useState(0);
   const [stroopWord, setStroopWord] = useState(0);
   const [stroopColor, setStroopColor] = useState(1);
+  const [stroopOptions, setStroopOptions] = useState<number[]>([0, 1, 2]);
+  const [stroopTimeLeft, setStroopTimeLeft] = useState(1500);
   const [feedback, setFeedback] = useState<"good" | "bad" | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stroopTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stroopDeadlineRef = useRef<number>(0);
 
-  // Purge: flash a random circle every 500ms
+  // Purge: flash a random circle every 800ms
   useEffect(() => {
     if (step !== 1) return;
     intervalRef.current = setInterval(() => {
       setActiveCircle(Math.floor(Math.random() * 9));
-    }, 500);
+    }, 800);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [step]);
 
-  // Pick a fresh stroop pair where word !== color
+  // Pick a fresh stroop pair (word !== color) and 3 buttons including the correct one
   const newStroop = () => {
     const w = Math.floor(Math.random() * COLORS.length);
     let c = Math.floor(Math.random() * COLORS.length);
     while (c === w) c = Math.floor(Math.random() * COLORS.length);
+    const others = COLORS.map((_, i) => i).filter((i) => i !== c);
+    for (let i = others.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [others[i], others[j]] = [others[j], others[i]];
+    }
+    const opts = [c, others[0], others[1]];
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+    }
     setStroopWord(w);
     setStroopColor(c);
+    setStroopOptions(opts);
+    setStroopTimeLeft(1500);
+    stroopDeadlineRef.current = Date.now() + 1500;
   };
 
   useEffect(() => {
     if (step === 2) newStroop();
+  }, [step]);
+
+  // Stroop countdown — 1.5s per challenge; miss = bad + new prompt
+  useEffect(() => {
+    if (step !== 2) return;
+    stroopTimerRef.current = setInterval(() => {
+      const remaining = stroopDeadlineRef.current - Date.now();
+      if (remaining <= 0) {
+        setFeedback("bad");
+        setTimeout(() => setFeedback(null), 350);
+        newStroop();
+      } else {
+        setStroopTimeLeft(remaining);
+      }
+    }, 50);
+    return () => {
+      if (stroopTimerRef.current) clearInterval(stroopTimerRef.current);
+    };
   }, [step]);
 
   const handleCircleClick = (i: number) => {
@@ -85,6 +120,7 @@ function GatekeeperPage() {
       setFeedback("good");
       setTimeout(() => setFeedback(null), 250);
       if (next >= STROOP_TARGET) {
+        if (stroopTimerRef.current) clearInterval(stroopTimerRef.current);
         setStep(3);
         setCalibrated(true);
         celebrate();
@@ -94,6 +130,7 @@ function GatekeeperPage() {
     } else {
       setFeedback("bad");
       setTimeout(() => setFeedback(null), 350);
+      newStroop();
     }
   };
 
