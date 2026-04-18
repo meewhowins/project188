@@ -181,8 +181,8 @@ function GatekeeperPage() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-foreground">Step 1 — The Purge</h2>
-              <p className="text-sm text-foreground/70">
-                A circle flashes every 0.5s. Tap it. Land {PURGE_TARGET} hits.
+              <p className="text-sm text-foreground/80">
+                A circle flashes every 0.8s. Tap it. Land {PURGE_TARGET} hits.
               </p>
             </div>
             <span className="rounded-full gradient-aurora px-3 py-1 text-sm font-bold text-white shadow-soft tabular-nums">
