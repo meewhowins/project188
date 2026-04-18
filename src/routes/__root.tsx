@@ -1,17 +1,17 @@
-import { Outlet, createRootRoute, HeadContent, Scripts, useLocation, Link } from "@tanstack/react-router";
+import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { Nav } from "@/components/focus/Nav";
 import { ParticleBg } from "@/components/focus/ParticleBg";
 import { useCalibrated } from "@/lib/storage";
-import { ShieldCheck, Lock } from "lucide-react";
+import { GatekeeperOverlay } from "@/components/focus/GatekeeperOverlay";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="glass max-w-md rounded-3xl p-8 text-center shadow-soft">
-        <h1 className="text-7xl font-bold text-aurora">404</h1>
-        <h2 className="mt-4 text-xl font-semibold">Lost in the flow</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="text-7xl font-bold text-deep-gradient">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">Lost in the flow</h2>
+        <p className="mt-2 text-sm text-foreground/80">
           That page drifted off. Let's get back to deep work.
         </p>
         <a
@@ -69,10 +69,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const [calibrated] = useCalibrated();
-  const location = useLocation();
-  const isGatekeeper = location.pathname.startsWith("/gatekeeper");
-  // Lock everything except the gatekeeper itself when not calibrated.
-  const locked = !calibrated && !isGatekeeper;
 
   return (
     <div className={`min-h-screen ${calibrated ? "calm-theme" : ""}`}>
@@ -81,26 +77,14 @@ function RootComponent() {
       <main className="relative mx-auto w-full max-w-5xl px-3 pb-24 pt-6 sm:px-6">
         <div
           className={`transition-all duration-700 ${
-            locked ? "pointer-events-none select-none blur-md saturate-50 opacity-60" : ""
+            !calibrated ? "pointer-events-none select-none blur-md saturate-50" : ""
           }`}
-          aria-hidden={locked}
+          aria-hidden={!calibrated}
         >
           <Outlet />
         </div>
-
-        {locked && (
-          <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 flex justify-center px-4">
-            <Link
-              to="/gatekeeper"
-              className="liquid-press shine pointer-events-auto inline-flex items-center gap-2 rounded-2xl gradient-sunset px-5 py-3 text-sm font-bold text-white shadow-soft hover-lift"
-            >
-              <Lock className="h-4 w-4" />
-              Locked — Run calibration
-              <ShieldCheck className="h-4 w-4" />
-            </Link>
-          </div>
-        )}
       </main>
+      <GatekeeperOverlay />
     </div>
   );
 }
