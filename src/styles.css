@@ -203,13 +203,19 @@
   .gradient-dream { background: var(--gradient-dream); }
   .gradient-forest { background: var(--gradient-forest); }
   .text-aurora {
-    background: linear-gradient(135deg, oklch(0.32 0.18 340), oklch(0.28 0.16 280) 50%, oklch(0.3 0.14 220));
+    background: linear-gradient(135deg, oklch(0.18 0.14 280), oklch(0.16 0.16 320) 50%, oklch(0.18 0.14 240));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .text-deep-gradient {
-    background: linear-gradient(135deg, oklch(0.18 0.08 280), oklch(0.22 0.12 340));
+    background: linear-gradient(135deg, oklch(0.14 0.08 280), oklch(0.18 0.14 250) 50%, oklch(0.12 0.06 240));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-deep-blue {
+    background: linear-gradient(135deg, oklch(0.18 0.14 250), oklch(0.12 0.1 240));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
