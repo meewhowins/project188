@@ -1,20 +1,21 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Brain, Ghost, Sparkles, Stethoscope, Home, Moon, Sun, BarChart3 } from "lucide-react";
-import { useFocusState } from "@/lib/storage";
+import { Brain, Ghost, Stethoscope, Home, Moon, Sun, BarChart3, Sparkles, ShieldCheck } from "lucide-react";
+import { useFocusState, useCalibrated } from "@/lib/storage";
 import { useEffect } from "react";
 
 const tabs = [
   { to: "/", label: "Home", icon: Home, gradient: "gradient-aurora" },
-  { to: "/friction", label: "Friction", icon: Brain, gradient: "gradient-sunset" },
-  { to: "/ghost", label: "Ghost", icon: Ghost, gradient: "gradient-dream" },
-  { to: "/distractions", label: "Anti-Switch", icon: Sparkles, gradient: "gradient-forest" },
-  { to: "/triage", label: "Pre-Flight", icon: Stethoscope, gradient: "gradient-aurora" },
+  { to: "/gatekeeper", label: "Gatekeeper", icon: ShieldCheck, gradient: "gradient-sunset" },
+  { to: "/friction", label: "Vibe Check", icon: Brain, gradient: "gradient-sunset" },
+  { to: "/ghost", label: "Focus Vault", icon: Ghost, gradient: "gradient-dream" },
+  { to: "/triage", label: "The Echo", icon: Stethoscope, gradient: "gradient-aurora" },
   { to: "/dashboard", label: "Dashboard", icon: BarChart3, gradient: "gradient-dream" },
 ] as const;
 
 export function Nav() {
   const location = useLocation();
   const [state, update] = useFocusState();
+  const [calibrated] = useCalibrated();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", state.theme === "dark");
@@ -27,7 +28,7 @@ export function Nav() {
           <span className="grid h-8 w-8 place-items-center rounded-2xl gradient-aurora animate-gradient-shift text-white shadow-soft">
             <Sparkles className="h-4 w-4" />
           </span>
-          <span className="text-aurora text-base sm:text-lg">Focus OS</span>
+          <span className="text-aurora text-base sm:text-lg">Aperion</span>
         </Link>
 
         <nav className="flex items-center gap-1 overflow-x-auto">
@@ -35,6 +36,7 @@ export function Nav() {
             const active =
               t.to === "/" ? location.pathname === "/" : location.pathname.startsWith(t.to);
             const Icon = t.icon;
+            const isGate = t.to === "/gatekeeper";
             return (
               <Link
                 key={t.to}
@@ -42,11 +44,14 @@ export function Nav() {
                 className={`liquid-press group relative flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3 sm:py-2 sm:text-sm ${
                   active
                     ? `text-white shadow-soft ${t.gradient}`
-                    : "text-foreground/70 hover:text-foreground hover:bg-white/40 dark:hover:bg-white/10"
+                    : "text-foreground hover:bg-white/40 dark:hover:bg-white/10"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline sm:inline">{t.label}</span>
+                {isGate && calibrated && (
+                  <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_8px_currentColor]" aria-hidden />
+                )}
                 {active && (
                   <span
                     aria-hidden

@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 
-const CHANNEL_NAME = "focus-os-sync";
+const CHANNEL_NAME = "aperion-sync";
 
 export type StressLevel = "low" | "med" | "high";
 export type Mood = "great" | "ok" | "meh" | "tired";
 export type TaskComplexity = "simple" | "med" | "hard";
 export type Noise = "quiet" | "noisy";
-export type Subject = "Math" | "CS" | "Reading" | "Writing" | "Other";
+export type Subject = string;
 
 export interface FrictionLog {
   id: string;
@@ -70,7 +70,7 @@ const DEFAULT_STATE: FocusOSState = {
   theme: "light",
 };
 
-const KEY = "focus-os-state-v1";
+const KEY = "aperion-state-v1";
 
 function isBrowser() {
   return typeof window !== "undefined";
@@ -125,10 +125,11 @@ function ensureInit() {
 }
 
 export function useFocusState(): [FocusOSState, (updater: (s: FocusOSState) => FocusOSState) => void] {
-  ensureInit();
-  const [state, setState] = useState<FocusOSState>(memoryState);
+  // Always start with DEFAULT_STATE on first render (matches SSR) to avoid hydration mismatches.
+  const [state, setState] = useState<FocusOSState>(DEFAULT_STATE);
 
   useEffect(() => {
+    ensureInit();
     const listener = (s: FocusOSState) => setState(s);
     listeners.add(listener);
     setState(memoryState);
@@ -138,9 +139,11 @@ export function useFocusState(): [FocusOSState, (updater: (s: FocusOSState) => F
   }, []);
 
   const update = useCallback((updater: (s: FocusOSState) => FocusOSState) => {
+    ensureInit();
     const next = updater(memoryState);
     memoryState = next;
     save(next);
+    setState(next);
     listeners.forEach((l) => l(next));
     try {
       channel?.postMessage({ type: "state", state: next });
@@ -155,3 +158,55 @@ export function useFocusState(): [FocusOSState, (updater: (s: FocusOSState) => F
 export function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
+
+// Calibration / Gatekeeper state — session-scoped (resets on tab close)
+const CALIB_KEY = "aperion-calibrated";
+const calibListeners = new Set<(c: boolean) => void>();
+let calibState = false;
+
+export function useCalibrated(): [boolean, (v: boolean) => void] {
+  const [c, setC] = useState(false);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      calibState = sessionStorage.getItem(CALIB_KEY) === "1";
+      setC(calibState);
+    }
+    const l = (v: boolean) => setC(v);
+    calibListeners.add(l);
+    return () => {
+      calibListeners.delete(l);
+    };
+  }, []);
+  const set = useCallback((v: boolean) => {
+    calibState = v;
+    if (typeof window !== "undefined") {
+      if (v) sessionStorage.setItem(CALIB_KEY, "1");
+      else sessionStorage.removeItem(CALIB_KEY);
+    }
+    calibListeners.forEach((cb) => cb(v));
+  }, []);
+  return [c, set];
+}
+
+export const SUBJECTS: string[] = [
+  "Math",
+  "Computer Science",
+  "Reading",
+  "Writing",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "History",
+  "Geography",
+  "Economics",
+  "Philosophy",
+  "Psychology",
+  "Languages",
+  "Art & Design",
+  "Music",
+  "Engineering",
+  "Statistics",
+  "Business",
+  "Law",
+  "Other",
+];

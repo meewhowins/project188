@@ -7,12 +7,12 @@ import { Moon, Smile, Meh, Frown, Heart, Zap } from "lucide-react";
 export const Route = createFileRoute("/friction")({
   head: () => ({
     meta: [
-      { title: "Focus Friction Dashboard — Focus OS" },
+      { title: "The Vibe Check — Aperion" },
       {
         name: "description",
-        content: "Tell Focus OS your sleep & stress. Get a session length your biology can actually sustain.",
+        content: "Tell Aperion your sleep & stress. Get a session length your biology can actually sustain.",
       },
-      { property: "og:title", content: "Focus Friction Dashboard — Focus OS" },
+      { property: "og:title", content: "The Vibe Check — Aperion" },
       {
         property: "og:description",
         content: "Sleep × stress → personalized sprint length and biology tips.",
@@ -57,10 +57,10 @@ function FrictionPage() {
   return (
     <div className="space-y-6">
       <header className="animate-slide-up">
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          <span className="text-aurora">Friction Dashboard</span>
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+          <span className="text-aurora">The Vibe Check</span>
         </h1>
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-1 text-foreground/70">
           Your biology sets the budget. We size the sprint.
         </p>
       </header>

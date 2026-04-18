@@ -53,16 +53,31 @@ export function prescribe(opts: {
   else if (energy <= 3 && complexity === "simple") location = "Couch / Bed";
   else if (noise === "noisy") location = "Headphones + Desk";
 
-  // Tip
-  const tips: Record<Subject, string> = {
+  // Tip — keyed by subject; falls back to a generic outcome prompt.
+  const tipMap: Record<string, string> = {
     Math: "Whiteboard one example before starting.",
-    CS: "Write the function signature first.",
+    "Computer Science": "Write the function signature first.",
     Reading: "Skim headings, then deep read.",
     Writing: "Outline 3 bullets before paragraph #1.",
-    Other: "Define the 1-line outcome.",
+    Physics: "Draw the free-body / system diagram first.",
+    Chemistry: "List knowns and unknowns before solving.",
+    Biology: "Sketch the pathway from memory, then check.",
+    History: "Build a timeline of 5 anchor dates.",
+    Geography: "Pull up the map before you read.",
+    Economics: "Restate the model in one sentence.",
+    Philosophy: "Steel-man the opposing view first.",
+    Psychology: "Name the bias / mechanism in play.",
+    Languages: "Read aloud — 5 minutes warm-up.",
+    "Art & Design": "Set a 60-second thumbnail timer.",
+    Music: "Loop the hardest 4 bars at 70% tempo.",
+    Engineering: "Define the constraint before the solution.",
+    Statistics: "State the null hypothesis first.",
+    Business: "Write the customer + outcome in one line.",
+    Law: "Identify the rule before applying facts.",
   };
+  const tip = tipMap[subject] ?? "Define the 1-line outcome.";
 
-  return { durationMin: duration, type, location, tip: tips[subject] };
+  return { durationMin: duration, type, location, tip };
 }
 
 export function formatTime(secs: number): string {

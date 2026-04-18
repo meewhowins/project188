@@ -1,7 +1,9 @@
-import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, createRootRoute, HeadContent, Scripts, useLocation, Link } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { Nav } from "@/components/focus/Nav";
 import { ParticleBg } from "@/components/focus/ParticleBg";
+import { useCalibrated } from "@/lib/storage";
+import { ShieldCheck, Lock } from "lucide-react";
 
 function NotFoundComponent() {
   return (
@@ -29,17 +31,17 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#FFB6C1" },
-      { title: "Focus OS — Biology-First Deep Work" },
+      { title: "Aperion — Biology-First Deep Work" },
       {
         name: "description",
         content:
-          "Treat focus as a resource, not willpower. Friction-aware sprints, ghost-protocol vaults, and pre-flight cognitive triage.",
+          "Treat focus as a resource, not willpower. Vibe checks, focus vaults, the Echo, and a Gatekeeper to earn your session.",
       },
-      { name: "author", content: "Focus OS" },
-      { property: "og:title", content: "Focus OS — Biology-First Deep Work" },
+      { name: "author", content: "Aperion" },
+      { property: "og:title", content: "Aperion — Biology-First Deep Work" },
       {
         property: "og:description",
-        content: "Plan deep work around your sleep, stress, energy, and noise. Pastel, playful, dynamic.",
+        content: "Plan deep work around your sleep, stress, energy, and noise.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -66,12 +68,38 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const [calibrated] = useCalibrated();
+  const location = useLocation();
+  const isGatekeeper = location.pathname.startsWith("/gatekeeper");
+  // Lock everything except the gatekeeper itself when not calibrated.
+  const locked = !calibrated && !isGatekeeper;
+
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${calibrated ? "calm-theme" : ""}`}>
       <ParticleBg />
       <Nav />
-      <main className="mx-auto w-full max-w-5xl px-3 pb-24 pt-6 sm:px-6">
-        <Outlet />
+      <main className="relative mx-auto w-full max-w-5xl px-3 pb-24 pt-6 sm:px-6">
+        <div
+          className={`transition-all duration-700 ${
+            locked ? "pointer-events-none select-none blur-md saturate-50 opacity-60" : ""
+          }`}
+          aria-hidden={locked}
+        >
+          <Outlet />
+        </div>
+
+        {locked && (
+          <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 flex justify-center px-4">
+            <Link
+              to="/gatekeeper"
+              className="liquid-press shine pointer-events-auto inline-flex items-center gap-2 rounded-2xl gradient-sunset px-5 py-3 text-sm font-bold text-white shadow-soft hover-lift"
+            >
+              <Lock className="h-4 w-4" />
+              Locked — Run calibration
+              <ShieldCheck className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
       </main>
     </div>
   );
