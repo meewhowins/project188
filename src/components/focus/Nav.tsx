@@ -24,10 +24,10 @@ export function Nav() {
     <header className="sticky top-0 z-40 w-full px-3 pt-3 sm:px-6 sm:pt-5">
       <div className="glass mx-auto flex max-w-5xl items-center justify-between gap-2 rounded-3xl px-3 py-2 shadow-soft sm:px-5 sm:py-3">
         <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-2xl gradient-aurora animate-gradient-shift text-white shadow-soft">
+          <span className="grid h-8 w-8 place-items-center rounded-2xl gradient-aurora animate-gradient-shift shadow-soft" style={{ color: "oklch(0.16 0.16 255)" }}>
             <Sparkles className="h-4 w-4" />
           </span>
-          <span className="text-deep-gradient text-base sm:text-lg">Aperion</span>
+          <span className="text-deep-blue text-base sm:text-lg">Aperion</span>
         </Link>
 
         <nav className="flex items-center gap-1 overflow-x-auto">
@@ -39,11 +39,12 @@ export function Nav() {
               <Link
                 key={t.to}
                 to={t.to}
-                className={`liquid-press group relative flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-xs font-semibold transition-all sm:px-3 sm:py-2 sm:text-sm ${
+                className={`liquid-press group relative flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-xs font-bold transition-all sm:px-3 sm:py-2 sm:text-sm ${
                   active
-                    ? `text-white shadow-soft ${t.gradient}`
-                    : "text-foreground hover:bg-white/40 dark:hover:bg-white/10"
+                    ? `shadow-soft ${t.gradient}`
+                    : "hover:bg-white/40 dark:hover:bg-white/10"
                 }`}
+                style={{ color: "oklch(0.16 0.16 255)" }}
               >
                 <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline sm:inline">{t.label}</span>
