@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useFocusState } from "@/lib/storage";
-import { Brain, Ghost, Sparkles, Stethoscope, Activity, Moon, Zap } from "lucide-react";
+import { useFocusState, useCalibrated } from "@/lib/storage";
+import { Brain, Ghost, Stethoscope, Activity, Moon, Zap, ShieldCheck, BarChart3 } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -14,15 +14,15 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Focus OS — Biology-First Deep Work" },
+      { title: "Aperion — Biology-First Deep Work" },
       {
         name: "description",
         content: "Treat focus as a resource. Plan sprints around your sleep, stress, energy, and noise.",
       },
-      { property: "og:title", content: "Focus OS — Biology-First Deep Work" },
+      { property: "og:title", content: "Aperion — Biology-First Deep Work" },
       {
         property: "og:description",
-        content: "Friction dashboard, ghost-protocol vaults, anti-distraction rewards, pre-flight triage.",
+        content: "The Vibe Check, The Focus Vault, The Echo — all gated by a focus calibration sequence.",
       },
     ],
   }),
@@ -33,35 +33,36 @@ const modules = [
   {
     to: "/friction" as const,
     icon: Brain,
-    title: "Focus Friction",
+    title: "The Vibe Check",
     desc: "Sleep + stress → personalized session length.",
     grad: "gradient-sunset",
   },
   {
     to: "/ghost" as const,
     icon: Ghost,
-    title: "Ghost Protocol",
+    title: "The Focus Vault",
     desc: "Self-contract vault. No exits without conditions met.",
     grad: "gradient-dream",
   },
   {
-    to: "/distractions" as const,
-    icon: Sparkles,
-    title: "Reward Queue",
-    desc: "Park temptations now. Enjoy them after.",
-    grad: "gradient-forest",
-  },
-  {
     to: "/triage" as const,
     icon: Stethoscope,
-    title: "Cognitive Triage",
+    title: "The Echo",
     desc: "Pre-flight checks → prescribed sprint type & spot.",
     grad: "gradient-aurora",
+  },
+  {
+    to: "/dashboard" as const,
+    icon: BarChart3,
+    title: "Dashboard",
+    desc: "Sleep trends + focus streak at a glance.",
+    grad: "gradient-forest",
   },
 ];
 
 function Index() {
   const [state] = useFocusState();
+  const [calibrated] = useCalibrated();
 
   const sleepData = state.friction.slice(-10).map((f, i) => ({
     name: `#${i + 1}`,
@@ -74,7 +75,7 @@ function Index() {
   const avgSession = totalSessions
     ? Math.round(state.sessions.reduce((a, b) => a + b.durationMin, 0) / totalSessions)
     : 0;
-  const distractionsLogged = state.distractions.length;
+  const frictionLogged = state.friction.length;
 
   return (
     <div className="space-y-8">
@@ -83,31 +84,39 @@ function Index() {
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full gradient-sunset opacity-40 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full gradient-forest opacity-40 blur-3xl" />
         <div className="relative">
-          <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
+          <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground">
             <Zap className="h-3 w-3 text-primary" />
             Biology-first deep work
           </span>
           <h1 className="mt-4 text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-            <span className="text-aurora animate-gradient-shift">Focus OS</span>
+            <span className="text-aurora animate-gradient-shift">Aperion</span>
           </h1>
-          <p className="mt-3 max-w-2xl text-balance text-lg font-medium text-foreground/80 sm:text-xl">
+          <p className="mt-3 max-w-2xl text-balance text-lg font-medium text-foreground sm:text-xl">
             <span className="animate-pulse-glow inline-block">Treat focus as a resource, not willpower.</span>
           </p>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
-            Sprints sized to your sleep. Vaults that hold the line. Distractions parked, not denied.
+          <p className="mt-2 max-w-2xl text-sm text-foreground/80 sm:text-base">
+            Sprints sized to your sleep. Vaults that hold the line. Calibrate to enter session mode.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
+            {!calibrated && (
+              <Link
+                to="/gatekeeper"
+                className="liquid-press shine inline-flex items-center gap-2 rounded-2xl gradient-sunset animate-gradient-shift px-5 py-3 text-sm font-bold text-white shadow-soft hover-lift"
+              >
+                <ShieldCheck className="h-4 w-4" /> Run Calibration
+              </Link>
+            )}
             <Link
               to="/friction"
-              className="liquid-press shine inline-flex items-center gap-2 rounded-2xl gradient-aurora animate-gradient-shift px-5 py-3 text-sm font-semibold text-white shadow-soft hover-lift"
+              className="liquid-press inline-flex items-center gap-2 rounded-2xl gradient-aurora animate-gradient-shift px-5 py-3 text-sm font-semibold text-white shadow-soft hover-lift"
             >
-              <Brain className="h-4 w-4" /> Start friction check
+              <Brain className="h-4 w-4" /> Vibe Check
             </Link>
             <Link
               to="/triage"
-              className="liquid-press inline-flex items-center gap-2 rounded-2xl glass px-5 py-3 text-sm font-semibold hover-lift"
+              className="liquid-press inline-flex items-center gap-2 rounded-2xl glass px-5 py-3 text-sm font-semibold text-foreground hover-lift"
             >
-              <Stethoscope className="h-4 w-4" /> Pre-flight triage
+              <Stethoscope className="h-4 w-4" /> The Echo
             </Link>
           </div>
         </div>
@@ -116,14 +125,14 @@ function Index() {
       {/* Stats */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={Activity} label="Sessions" value={totalSessions} grad="gradient-sunset" />
-        <StatCard icon={Sparkles} label="Completed" value={completedSessions} grad="gradient-forest" />
+        <StatCard icon={Zap} label="Completed" value={completedSessions} grad="gradient-forest" />
         <StatCard icon={Moon} label="Avg min" value={avgSession} grad="gradient-dream" />
-        <StatCard icon={Zap} label="Parked" value={distractionsLogged} grad="gradient-aurora" />
+        <StatCard icon={Brain} label="Vibes logged" value={frictionLogged} grad="gradient-aurora" />
       </section>
 
       {/* Modules */}
       <section>
-        <h2 className="mb-3 text-lg font-bold tracking-tight">Modules</h2>
+        <h2 className="mb-3 text-lg font-bold tracking-tight text-foreground">Modules</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {modules.map((m, i) => {
             const Icon = m.icon;
@@ -140,8 +149,8 @@ function Index() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">{m.title}</h3>
-                    <p className="text-sm text-muted-foreground">{m.desc}</p>
+                    <h3 className="font-semibold text-foreground">{m.title}</h3>
+                    <p className="text-sm text-foreground/70">{m.desc}</p>
                   </div>
                 </div>
               </Link>
@@ -153,23 +162,23 @@ function Index() {
       {/* Trends */}
       <section className="rounded-3xl glass p-5 shadow-soft animate-slide-up">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-bold tracking-tight">Sleep × Plan trend</h2>
-          <span className="text-xs text-muted-foreground">Last 10 friction checks</span>
+          <h2 className="text-lg font-bold tracking-tight text-foreground">Sleep × Plan trend</h2>
+          <span className="text-xs text-foreground/70">Last 10 vibe checks</span>
         </div>
         {sleepData.length === 0 ? (
           <Link
             to="/friction"
             className="liquid-press hover-lift grid place-items-center rounded-2xl border border-dashed border-primary/50 bg-primary/5 p-8 text-center text-sm font-semibold text-foreground transition-colors hover:bg-primary/10"
           >
-            Start your first friction check ✨
+            Start your first vibe check ✨
           </Link>
         ) : (
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sleepData}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-                <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                <XAxis dataKey="name" stroke="var(--foreground)" fontSize={11} />
+                <YAxis stroke="var(--foreground)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
                     background: "var(--popover)",
@@ -208,18 +217,10 @@ function StatCard({
           <Icon className="h-4 w-4" />
         </div>
         <div>
-          <div className="text-2xl font-bold tabular-nums">{value}</div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
+          <div className="text-2xl font-bold tabular-nums text-foreground">{value}</div>
+          <div className="text-xs uppercase tracking-wider text-foreground/70">{label}</div>
         </div>
       </div>
-    </div>
-  );
-}
-
-export function EmptyState({ text }: { text: string }) {
-  return (
-    <div className="grid place-items-center rounded-2xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
-      {text}
     </div>
   );
 }

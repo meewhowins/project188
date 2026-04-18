@@ -275,6 +275,38 @@
 @keyframes ring-progress {
   to { stroke-dashoffset: 0; }
 }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+.animate-shake { animation: shake 0.35s ease-in-out; }
+
+/* Calm theme — kicks in after calibration: cool, deep, focused. */
+.calm-theme {
+  --background: oklch(0.22 0.05 250);
+  --foreground: oklch(0.97 0.02 220);
+  --muted: oklch(0.3 0.04 250);
+  --muted-foreground: oklch(0.82 0.04 220);
+  --card: oklch(0.28 0.05 250 / 70%);
+  --card-foreground: oklch(0.97 0.02 220);
+  --popover: oklch(0.26 0.05 250);
+  --popover-foreground: oklch(0.97 0.02 220);
+  --primary: oklch(0.78 0.12 220);
+  --primary-foreground: oklch(0.2 0.05 250);
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.78 0.12 220);
+  transition: background 600ms ease, color 600ms ease;
+}
+.calm-theme body,
+body:has(.calm-theme) {
+  background-image:
+    radial-gradient(900px 700px at 10% -10%, oklch(0.45 0.12 230 / 35%), transparent 60%),
+    radial-gradient(900px 700px at 90% 110%, oklch(0.4 0.1 270 / 35%), transparent 60%);
+}
 
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-float-orb { animation: float-orb 14s ease-in-out infinite; }

@@ -8,12 +8,12 @@ import { Ghost, Lock, Plus, Play, Pause, RotateCcw, Maximize2, X, Check } from "
 export const Route = createFileRoute("/ghost")({
   head: () => ({
     meta: [
-      { title: "Ghost Protocol Workspace — Focus OS" },
+      { title: "The Focus Vault — Aperion" },
       {
         name: "description",
         content: "Sign a self-contract, enter the vault, and only exit on your terms.",
       },
-      { property: "og:title", content: "Ghost Protocol Workspace — Focus OS" },
+      { property: "og:title", content: "The Focus Vault — Aperion" },
       {
         property: "og:description",
         content: "Self-contracts, fullscreen vault, penalties for breaks.",
@@ -117,10 +117,10 @@ function GhostPage() {
           <Ghost className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            <span className="text-aurora">Ghost Protocol</span>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            <span className="text-aurora">The Focus Vault</span>
           </h1>
-          <p className="text-muted-foreground">Sign your contract. Disappear. Deliver.</p>
+          <p className="text-foreground/70">Sign your contract. Disappear. Deliver.</p>
         </div>
       </header>
 

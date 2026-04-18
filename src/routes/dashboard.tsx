@@ -13,12 +13,12 @@ import {
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Focus OS" },
+      { title: "Dashboard — Aperion" },
       {
         name: "description",
         content: "Sleep trends and your focus streak at a glance.",
       },
-      { property: "og:title", content: "Dashboard — Focus OS" },
+      { property: "og:title", content: "Dashboard — Aperion" },
       {
         property: "og:description",
         content: "Track sleep, focus streak, and momentum over time.",
@@ -80,7 +80,7 @@ function DashboardPage() {
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
           <span className="text-aurora">Dashboard</span>
         </h1>
-        <p className="text-muted-foreground">Your weekly biology + momentum view.</p>
+        <p className="text-foreground/70">Your weekly biology + momentum view.</p>
       </header>
 
       <section className="animate-slide-up rounded-3xl glass p-5 shadow-soft sm:p-6">
@@ -147,8 +147,8 @@ function DashboardPage() {
             />
           ))}
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Each square = one day. Glowing = a fulfilled Ghost Protocol session.
+        <p className="mt-3 text-xs text-foreground/70">
+          Each square = one day. Glowing = a fulfilled Focus Vault session.
         </p>
       </section>
     </div>
