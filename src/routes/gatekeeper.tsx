@@ -40,31 +40,66 @@ function GatekeeperPage() {
   const [stroopScore, setStroopScore] = useState(0);
   const [stroopWord, setStroopWord] = useState(0);
   const [stroopColor, setStroopColor] = useState(1);
+  const [stroopOptions, setStroopOptions] = useState<number[]>([0, 1, 2]);
+  const [stroopTimeLeft, setStroopTimeLeft] = useState(1500);
   const [feedback, setFeedback] = useState<"good" | "bad" | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stroopTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stroopDeadlineRef = useRef<number>(0);
 
-  // Purge: flash a random circle every 500ms
+  // Purge: flash a random circle every 800ms
   useEffect(() => {
     if (step !== 1) return;
     intervalRef.current = setInterval(() => {
       setActiveCircle(Math.floor(Math.random() * 9));
-    }, 500);
+    }, 800);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [step]);
 
-  // Pick a fresh stroop pair where word !== color
+  // Pick a fresh stroop pair (word !== color) and 3 buttons including the correct one
   const newStroop = () => {
     const w = Math.floor(Math.random() * COLORS.length);
     let c = Math.floor(Math.random() * COLORS.length);
     while (c === w) c = Math.floor(Math.random() * COLORS.length);
+    const others = COLORS.map((_, i) => i).filter((i) => i !== c);
+    for (let i = others.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [others[i], others[j]] = [others[j], others[i]];
+    }
+    const opts = [c, others[0], others[1]];
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+    }
     setStroopWord(w);
     setStroopColor(c);
+    setStroopOptions(opts);
+    setStroopTimeLeft(1500);
+    stroopDeadlineRef.current = Date.now() + 1500;
   };
 
   useEffect(() => {
     if (step === 2) newStroop();
+  }, [step]);
+
+  // Stroop countdown — 1.5s per challenge; miss = bad + new prompt
+  useEffect(() => {
+    if (step !== 2) return;
+    stroopTimerRef.current = setInterval(() => {
+      const remaining = stroopDeadlineRef.current - Date.now();
+      if (remaining <= 0) {
+        setFeedback("bad");
+        setTimeout(() => setFeedback(null), 350);
+        newStroop();
+      } else {
+        setStroopTimeLeft(remaining);
+      }
+    }, 50);
+    return () => {
+      if (stroopTimerRef.current) clearInterval(stroopTimerRef.current);
+    };
   }, [step]);
 
   const handleCircleClick = (i: number) => {
@@ -85,6 +120,7 @@ function GatekeeperPage() {
       setFeedback("good");
       setTimeout(() => setFeedback(null), 250);
       if (next >= STROOP_TARGET) {
+        if (stroopTimerRef.current) clearInterval(stroopTimerRef.current);
         setStep(3);
         setCalibrated(true);
         celebrate();
@@ -94,6 +130,7 @@ function GatekeeperPage() {
     } else {
       setFeedback("bad");
       setTimeout(() => setFeedback(null), 350);
+      newStroop();
     }
   };
 
@@ -144,8 +181,8 @@ function GatekeeperPage() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-foreground">Step 1 — The Purge</h2>
-              <p className="text-sm text-foreground/70">
-                A circle flashes every 0.5s. Tap it. Land {PURGE_TARGET} hits.
+              <p className="text-sm text-foreground/80">
+                A circle flashes every 0.8s. Tap it. Land {PURGE_TARGET} hits.
               </p>
             </div>
             <span className="rounded-full gradient-aurora px-3 py-1 text-sm font-bold text-white shadow-soft tabular-nums">
@@ -183,18 +220,25 @@ function GatekeeperPage() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-foreground">Step 2 — Stroop Test</h2>
-              <p className="text-sm text-foreground/70">
-                Tap the <span className="font-bold">font color</span>, not the word.
+              <p className="text-sm text-foreground/80">
+                Tap the <span className="font-bold">font color</span>, not the word. 1.5s per round.
               </p>
             </div>
             <span className="rounded-full gradient-dream px-3 py-1 text-sm font-bold text-foreground shadow-soft tabular-nums">
               {stroopScore}/{STROOP_TARGET}
             </span>
           </div>
-          <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
               className="h-full gradient-dream transition-all"
               style={{ width: `${stroopPct}%` }}
+            />
+          </div>
+          {/* 1.5s countdown bar */}
+          <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-muted/70">
+            <div
+              className="h-full gradient-sunset transition-[width] duration-75 ease-linear"
+              style={{ width: `${Math.max(0, (stroopTimeLeft / 1500) * 100)}%` }}
             />
           </div>
 
@@ -215,17 +259,20 @@ function GatekeeperPage() {
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-5">
-            {COLORS.map((c, i) => (
-              <button
-                key={c.name}
-                onClick={() => handleStroopAnswer(i)}
-                className="liquid-press rounded-2xl px-3 py-3 text-sm font-bold text-white shadow-soft hover-lift"
-                style={{ background: c.value }}
-              >
-                {c.name}
-              </button>
-            ))}
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            {stroopOptions.map((i) => {
+              const c = COLORS[i];
+              return (
+                <button
+                  key={c.name}
+                  onClick={() => handleStroopAnswer(i)}
+                  className="liquid-press rounded-2xl px-3 py-4 text-sm font-extrabold text-white shadow-soft hover-lift"
+                  style={{ background: c.value, textShadow: "0 1px 2px oklch(0 0 0 / 40%)" }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
           </div>
         </section>
       )}
